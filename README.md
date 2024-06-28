@@ -70,13 +70,13 @@ Backend: https://statxo.onrender.com
 
 # Project Features
 
-### User Authentication
 - Implemented user registration, login, and logout functionalities.
 - Password hashing using bcrypt for enhanced security.
 - Access tokens are provided to the frontend to verify user identity.
 - Logout functionality includes blacklisting the access token to prevent unauthorized access.
 - Logs the user data in the backend who changed the data.
 - Updates data on the UI with the user's username and date and time when edited.
+- Responsive layout for all types of screens.
 
   
 ## Installation & Getting started
