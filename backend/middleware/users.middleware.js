@@ -71,22 +71,10 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-const authorizeUser = (...roles) => {
-  return async (req, res, next) => {
-    if (roles.includes(req.role)) {
-      next();
-    } else {
-      return res.status(400).json({
-        error: true,
-        message: "User not authorized to access this route",
-      });
-    }
-  };
-};
+
 
 module.exports = {
   validateRegister,
   validateLogin,
   authenticateUser,
-  authorizeUser,
 };
