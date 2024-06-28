@@ -1,13 +1,17 @@
-import { useState } from 'react'
-
-import './App.css'
+import { useState } from "react";
+import { AllRoutes } from "./routes/AllRoutes";
+import "./App.css";
+import { Dashborad } from "./Pages/Dashborad";
+import { Navbar } from "./components/Navbar";
 
 function App() {
   return (
     <>
-      <div>Hello</div>
+      <Navbar/>
+      <AllRoutes />
+      
     </>
-  )
+  );
 }
 
-export default App
+export default App;
