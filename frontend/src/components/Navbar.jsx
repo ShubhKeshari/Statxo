@@ -3,7 +3,9 @@ import logo from "../assets/logo.png";
 import { AuthContext} from "../context/AuthContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-const BASE_URL="http://localhost:8080"
+
+import { BASE_URL } from "../../util/vars"
+
 const Navbar = () => {
   const { auth, setAuth } = useContext(AuthContext);
   const navigate = useNavigate();

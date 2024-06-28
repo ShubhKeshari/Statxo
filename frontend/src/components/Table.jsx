@@ -1,15 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, Box, Select, useToast } from "@chakra-ui/react";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Box,
+  Select,
+  useToast,
+} from "@chakra-ui/react";
 import { AuthContext } from "../context/AuthContext";
+import { BASE_URL } from "../../util/vars"
 const DataTable = () => {
-  const url = "http://localhost:8080";
-
   const [tableData, setTableData] = useState([]);
   const toast = useToast();
   const { auth, setAuth } = useContext(AuthContext);
   const fetchData = async () => {
     try {
-      const res = await fetch(`${url}/tasks/task`);
+      const res = await fetch(`${BASE_URL}/tasks/task`);
       const data = await res.json();
       console.log(data);
       setTableData(data.data);
@@ -23,14 +32,14 @@ const DataTable = () => {
       });
     }
   };
-  
+
   const updateData = async (id, newData) => {
     try {
-      const res = await fetch(`${url}/tasks/update/${id}`, {
+      const res = await fetch(`${BASE_URL}/tasks/update/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          'Authorization':`Bearer ${auth.accessToken}`
+          Authorization: `Bearer ${auth.accessToken}`,
         },
         body: JSON.stringify(newData),
       });
@@ -63,6 +72,14 @@ const DataTable = () => {
   };
   useEffect(() => {
     fetchData();
+    if (localStorage.getItem("email")) {
+      setAuth({
+        isAuth: "true",
+        email: localStorage.getItem("email"),
+        userId: localStorage.getItem("userId"),
+        accessToken: localStorage.getItem("accessToken"),
+      });
+    }
   }, []);
 
   const handleActionType = (item, value) => {
@@ -74,7 +91,7 @@ const DataTable = () => {
     updateData(newData._id, newData);
   };
   return (
-    <Box  mt={16} overflow={"auto"} width="100%" p={4}>
+    <Box mt={16} overflow={"auto"} width="100%" p={4}>
       <Table variant="striped" colorScheme="teal">
         <Thead bg="yellow.300">
           <Tr>

@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-const BASE_URL = "http://localhost:8080"
+import { BASE_URL } from "../../util/vars"
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);

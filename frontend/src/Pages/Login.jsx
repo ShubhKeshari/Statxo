@@ -16,7 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { Link as RouterLink } from "react-router-dom";
-const BASE_URL = "http://localhost:8080";
+import { BASE_URL } from "../../util/vars"
 
 const Login = () => {
   const [state, setState] = React.useState({
@@ -62,7 +62,6 @@ const Login = () => {
         throw new Error(errorData.message || "Something went wrong");
       }
       const result = await response.json();
-      console.log(result);
       setAuth({
         isAuth: true,
         username: result.data.username,
