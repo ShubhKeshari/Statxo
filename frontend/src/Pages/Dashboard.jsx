@@ -6,7 +6,6 @@ import { DataTable} from "../components/Table";
 const Dashboard = () => {
   return (
     <Box bg={"#f2f2f2"} height="100vh" >
-        {/* <Navbar/> */}
         <DataTable/>
     </Box>
   );

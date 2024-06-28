@@ -1,49 +1,80 @@
-import React, { useState } from "react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Box,
-  Select,
-} from "@chakra-ui/react";
+import React, { useContext, useEffect, useState } from "react";
+import { Table, Thead, Tbody, Tr, Th, Td, Box, Select, useToast } from "@chakra-ui/react";
+import { AuthContext } from "../context/AuthContext";
 const DataTable = () => {
-  const initialData = [
-    {
-      quantity: 1,
-      amount: 312.35,
-      postingYear: 2020,
-      postingMonth: 1,
-      actionType: "option1",
-      actionNumber: 123456,
-      actionName: "Action 1",
-      status: "In Progress",
-      editedBy: "User1",
-      editedWhen: "2023-01-01",
-    },
-    {
-      quantity: 1,
-      amount: 889.0,
-      postingYear: 2020,
-      postingMonth: 2,
-      actionType: "option2",
-      actionNumber: 123457,
-      actionName: "Action 2",
-      status: "In Progress",
-      editedBy: "User2",
-      editedWhen: "2023-01-02",
-    },
-  ];
-  const [data, setData] = useState(initialData);
-  const handleSelectChange = (index, value) => {
-    const newData = [...data];
-    newData[index].actionType = value;
-    setData(newData);
+  const url = "http://localhost:8080";
+
+  const [tableData, setTableData] = useState([]);
+  const toast = useToast();
+  const { auth, setAuth } = useContext(AuthContext);
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`${url}/tasks/task`);
+      const data = await res.json();
+      console.log(data);
+      setTableData(data.data);
+    } catch (error) {
+      toast({
+        title: `${error.message}`,
+        status: "error",
+        duration: 4000,
+        position: "top-right",
+        isClosable: true,
+      });
+    }
+  };
+  
+  const updateData = async (id, newData) => {
+    try {
+      const res = await fetch(`${url}/tasks/update/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization':`Bearer ${auth.accessToken}`
+        },
+        body: JSON.stringify(newData),
+      });
+
+      if (!res.ok) {
+        const errorMessage = await res.json();
+        throw new Error(errorMessage.message || "Failed to update data");
+      }
+
+      const updatedData = await res.json();
+      toast({
+        title: `${updatedData.message}`,
+        status: "success",
+        duration: 4000,
+        position: "top-right",
+        isClosable: true,
+      });
+      fetchData();
+      return updatedData;
+    } catch (error) {
+      toast({
+        title: `${error.message}`,
+        status: "error",
+        duration: 4000,
+        position: "top-right",
+        isClosable: true,
+      });
+      throw error;
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleActionType = (item, value) => {
+    const newData = { ...item, ActionType: value };
+    updateData(newData._id, newData);
+  };
+  const handleActionName = (item, value) => {
+    const newData = { ...item, ActionName: value };
+    updateData(newData._id, newData);
   };
   return (
-    <Box maxHeight="calc(100vh-64px)" overflow={"auto"} width="100%" p={4}>
+    <Box  mt={16} overflow={"auto"} width="100%" p={4}>
       <Table variant="striped" colorScheme="teal">
         <Thead bg="yellow.300">
           <Tr>
@@ -60,38 +91,38 @@ const DataTable = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((item, index) => (
+          {tableData.map((item, index) => (
             <Tr key={index}>
-              <Td>1</Td>
-              <Td>{(Math.random() * 1000).toFixed(2)}</Td>
-              <Td>2020</Td>
-              <Td>{Math.ceil(Math.random() * 12)}</Td>
+              <Td>{item.Quantity}</Td>
+              <Td>{item.Amount}</Td>
+              <Td>{item.PostingYear}</Td>
+              <Td>{item.PostingMonth}</Td>
               <Td>
                 <Select
-                  value={item.actionType}
-                  onChange={(e) => handleSelectChange(index, e.target.value)}
+                  value={item.ActionType}
+                  onChange={(e) => handleActionType(item, e.target.value)}
                 >
-                  <option value="option1">Price Negotiation</option>
-                  <option value="option2">Price Change</option>
-                  <option value="option3">Price Increase</option>
-                  <option value="option4">Product - Non ERP</option>
+                  <option value="Price-Negotiation">Price Negotiation</option>
+                  <option value="Scrap">Scrap</option>
+                  <option value="Product ERP">Product ERP</option>
+                  <option value="Price Non ERP">Price Non ERP</option>
                 </Select>
               </Td>
-              <Td>{Math.floor(Math.random() * 1000000)}</Td>
+              <Td>{item.ActionNumber}</Td>
               <Td>
                 <Select
-                  value={item.actionType}
-                  onChange={(e) => handleSelectChange(index, e.target.value)}
+                  value={item.ActionName}
+                  onChange={(e) => handleActionName(item, e.target.value)}
                 >
-                  <option value="option1">Price Negotiation</option>
-                  <option value="option2">Price Change</option>
-                  <option value="option3">Price Increase</option>
-                  <option value="option4">Product - Non ERP</option>
+                  <option value="Rebate">Rebate</option>
+                  <option value="Price Increase">Price Increase</option>
+                  <option value="Additional Task">Additional Task</option>
+                  <option value="Price Decrease">Price Decrease</option>
                 </Select>
               </Td>
-              <Td>{Math.random() > 0.5 ? "In Progress" : "Completed"}</Td>
-              <Td></Td>
-              <Td></Td>
+              <Td>{item.Status}</Td>
+              <Td>{item.UserName}</Td>
+              <Td>{item.EditedAt}</Td>
             </Tr>
           ))}
         </Tbody>

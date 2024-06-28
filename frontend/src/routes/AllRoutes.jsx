@@ -2,7 +2,7 @@ import React from "react";
 import { Login } from "../Pages/Login";
 import { Register } from "../Pages/Register";
 import { Route, Routes } from "react-router-dom";
-import { Dashboard } from "../Pages/Dashborad";
+import { Dashboard } from "../Pages/Dashboard";
 
 const AllRoutes = () => {
   return (

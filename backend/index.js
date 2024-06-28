@@ -1,18 +1,30 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+const { connectDB } = require("./utils/db.config");
+const { usersRoute } = require("./routes/users.routes");
+const { tasksRoute } = require("./routes/tasks.routes");
 
-app.use(express());
+const PORT = process.env.PORT || 8080;
+
 app.use(cors());
 
-const port = process.env.PORT || 8080;
+app.use(express.json());
 
+app.get("/", (req, res) => {
+  try {
+    res.status(200).json({ message: "Server Home Page" });
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+});
 
-app.get("/",(req,res)=>{
-    res.status(200).json({error:false,message:"This is server home page"});
-})
+app.use("/users", usersRoute);
+app.use("/tasks", tasksRoute);
 
-app.listen(port,(req,res)=>{
-    console.log(`Server is running on http://localhost:${port}`);
-})
+app.listen(PORT, async () => {
+  await connectDB();
+  console.log(`server is running at http://localhost:${PORT}`);
+});
